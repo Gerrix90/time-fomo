@@ -4,14 +4,14 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-Time Counter is a web-based application that provides various time-related countdown features:
+Time Counter (also referred to as "Time Fomo" in the README) is a web-based application that provides various time-related countdown features:
 
 1. Daily countdown (time remaining until end of day)
 2. Year countdown (days remaining until end of year)
 3. Custom event countdown (days/time until a user-specified event)
 4. Life hourglass visualization (a visual representation of age/life progression)
 
-The application is built with vanilla JavaScript, HTML, and CSS (using Tailwind CSS for styling). It uses LocalStorage to persist user settings and preferences.
+The application is built with vanilla JavaScript, HTML, and CSS (using Tailwind CSS for styling via CDN). It uses LocalStorage to persist user settings and preferences. All code is contained within a single HTML file (index.html).
 
 ## Development Commands
 
@@ -93,6 +93,19 @@ When working with this codebase, keep in mind:
    - `fomoLifeCalendarAge`: User's current age for life hourglass
    - `fomoLifeCalendarMaxAge`: Target age for life hourglass
 
+### JavaScript Code Structure
+
+The JavaScript code is organized in the following sections:
+
+1. **Global Variables and Constants** (lines 431-442): Defines localStorage keys and global state variables.
+2. **DOM Element References** (lines 444-498): Organizes DOM elements by functionality (timers, life hourglass, navigation, modal).
+3. **Navigation and Modal Functions** (lines 502-645): Handles page transitions and settings modal behavior.
+4. **Timer Page Functions** (lines 649-783): Manages daily countdown, year countdown, and custom event countdown logic.
+5. **Life Hourglass Functions** (lines 786-878): Handles the life visualization component with SVG hourglasses.
+6. **Application Initialization** (lines 881-898): Sets up the application on page load.
+
+When making changes, maintain this organizational structure and follow the existing coding patterns.
+
 ## Animation System
 
 The application includes several animations:
@@ -115,3 +128,30 @@ The application UI text is currently in Croatian. Key terms:
 - "Postavke" = Settings
 - "Dana do kraja godine" = Days until end of year
 - "Preostalo vrijeme do kraja dana" = Remaining time until end of day
+
+## Common Tasks and Debugging
+
+### Adding a New Feature
+
+When adding a new feature to the application:
+
+1. Locate the appropriate section in the HTML for UI elements
+2. Add any needed CSS styles to the `<style>` section
+3. Implement the JavaScript functionality in the appropriate section of the script
+4. Update localStorage keys/handling if the feature requires persistence
+5. Add any new modal settings to the unified settings modal
+
+### Testing
+
+To test the application:
+1. Serve the application using one of the methods in the Development Commands section
+2. Open the browser's console (F12 or Cmd+Option+I) to check for JavaScript errors
+3. Test feature interactions, especially between pages and with the settings modal
+4. Verify that localStorage persistence works by refreshing the page
+
+### Common Issues
+
+- **Settings not saving**: Verify localStorage key names and data formats match those in the constants section
+- **Animations not working**: Check CSS transitions and class toggle logic in the JavaScript
+- **Modal display problems**: Verify modal visibility toggling in the unified modal functions
+- **Page transition issues**: Check the showPage function and content-enter/exit classes
