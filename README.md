@@ -1,5 +1,7 @@
 # Time Fomo
 
+**Live Demo:** [https://gerrix90.github.io/time-fomo/](https://gerrix90.github.io/time-fomo/)
+
 An elegant web application for tracking remaining time until end of day, year-end, and special events, with life span visualization through hourglasses.
 
 ## Features
