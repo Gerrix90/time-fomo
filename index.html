@@ -1,0 +1,901 @@
+<!DOCTYPE html>
+<html lang="hr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Odbrojavanja i Životni Pješčani Sat</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+
+        /* Stilovi za prekidač (toggle switch) */
+        .switch {
+            position: relative;
+            display: inline-block;
+            width: 50px;
+            height: 28px;
+        }
+        .switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #4A5568; /* bg-slate-600 */
+            transition: .4s;
+            border-radius: 28px;
+        }
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 20px;
+            width: 20px;
+            left: 4px;
+            bottom: 4px;
+            background-color: white;
+            transition: .4s;
+            border-radius: 50%;
+        }
+        input:checked + .slider {
+            background-color: #38A169; /* bg-green-600 */
+        }
+        input:focus + .slider {
+            box-shadow: 0 0 2px #38A169;
+        }
+        input:checked + .slider:before {
+            transform: translateX(22px);
+        }
+
+        .gradient-background {
+            background-image: linear-gradient(to top right, #1A202C, #2D3748);
+        }
+
+        .timer-card {
+            background-color: rgba(45, 55, 72, 0.7); 
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        #customEventCountdownContainer.timer-card {
+             background-color: rgba(67, 56, 202, 0.3); 
+             border: 1px solid rgba(129, 140, 248, 0.2); 
+        }
+
+        .content-enter { 
+            opacity: 0;
+            transform: translateY(-20px);
+            transition: opacity 0.5s ease-out, transform 0.5s ease-out;
+        }
+        .content-enter-active {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        .content-exit { 
+            opacity: 1;
+            transform: translateY(0);
+            transition: opacity 0.3s ease-in, transform 0.3s ease-in;
+        }
+        .content-exit-active {
+            opacity: 0;
+            transform: translateY(-20px);
+        }
+
+        /* Stilovi za JEDINSTVENI modal postavki */
+        #unifiedSettingsModal { 
+            opacity: 1;
+            pointer-events: auto;
+            transition: opacity 0.3s ease-in-out;
+        }
+        #unifiedSettingsModal.modal-hidden {
+            opacity: 0;
+            pointer-events: none;
+        }
+        #unifiedSettingsModal.modal-hidden #unifiedModalOverlay {
+            opacity: 0;
+        }
+        #unifiedSettingsModal.modal-hidden #unifiedModalContentPanel {
+            opacity: 0;
+            transform: scale(0.95) translateY(-20px);
+        }
+        #unifiedModalOverlay { 
+            opacity: 1;
+            transition: opacity 0.3s ease-in-out;
+        }
+        #unifiedModalContentPanel { 
+            opacity: 1;
+            transform: scale(1) translateY(0);
+            transition: transform 0.3s ease-in-out, opacity 0.3s ease-in-out;
+        }
+
+        .timer-digit-group { 
+            display: inline-block;
+            text-align: center;
+            font-variant-numeric: tabular-nums;
+        }
+        #yearCountdown { 
+            font-variant-numeric: tabular-nums;
+        }
+        
+        #yearCountdownLabel { 
+            height: 0;
+            overflow: hidden;
+            margin-bottom: 0;
+            opacity: 0;
+            transition: opacity 0.3s ease-in-out, height 0.3s ease-in-out, margin-bottom 0.3s ease-in-out;
+        }
+        #yearCountdownContainer:hover #yearCountdownLabel,
+        #yearCountdownContainer.label-pinned #yearCountdownLabel {
+            opacity: 1;
+            height: 1.5em; 
+            margin-bottom: 0.25rem; 
+        }
+
+        #dailyCountdownLabel { 
+            height: 0;
+            overflow: hidden;
+            margin-bottom: 0;
+            opacity: 0;
+            transition: opacity 0.3s ease-in-out, height 0.3s ease-in-out, margin-bottom 0.3s ease-in-out;
+        }
+        .daily-timer-card:hover #dailyCountdownLabel,
+        .daily-timer-card.label-pinned #dailyCountdownLabel {
+            opacity: 1;
+            height: 1.75em; 
+            margin-bottom: 0.5rem; 
+        }
+
+        .custom-event-time-segment span:first-child { 
+            font-variant-numeric: tabular-nums;
+        }
+        .custom-event-time-segment span:last-child { 
+            font-weight: 500; 
+        }
+
+        .input-style {
+            background-color: #2d3748; 
+            border: 1px solid #4a5568; 
+            color: #e2e8f0; 
+            border-radius: 0.375rem; 
+            padding: 0.5rem 0.75rem; 
+            width: 100%;
+        }
+        .input-style[type="radio"] {
+            width: auto; 
+        }
+        .input-style:focus {
+            outline: none;
+            border-color: #38a169; 
+            box-shadow: 0 0 0 2px rgba(56, 161, 105, 0.5); 
+        }
+        .btn-primary {
+            background-color: #38a169; 
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 0.375rem; 
+            font-weight: 500; 
+            transition: background-color 0.2s;
+        }
+        .btn-primary:hover {
+            background-color: #2f855a; 
+        }
+        .btn-secondary {
+            background-color: #4a5568; 
+            color: #e2e8f0; 
+            padding: 0.5rem 1rem;
+            border-radius: 0.375rem; 
+            font-weight: 500; 
+            transition: background-color 0.2s;
+        }
+        .btn-secondary:hover {
+            background-color: #2d3748; 
+        }
+
+        /* Stilovi za Životni Pješčani Sat stranicu */
+        .year-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 4px;
+            transition: transform 0.2s ease-out;
+            will-change: transform;
+        }
+        .year-item:hover .hourglass-svg-container {
+            transform: scale(1.1);
+        }
+        .year-item:hover .year-number {
+            color: #67e8f9; 
+        }
+        .hourglass-svg-container {
+            width: 44px;  
+            height: 44px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 3px;
+            transition: transform 0.2s ease-out;
+        }
+        .hourglass-svg-container svg {
+            width: 100%;
+            height: 100%;
+        }
+        .year-number {
+            font-size: 0.65rem;
+            font-weight: 500;
+            color: #94a3b8; 
+            transition: color 0.2s ease;
+        }
+        .year-item.year-past .year-number { color: #64748b; }
+        .year-item.year-current .year-number { color: #f0abfc; font-weight: 700; }
+        .year-item.year-future .year-number { color: #a5f3fc; }
+        .year-item.year-neutral .year-number { color: #64748b; }
+
+        @keyframes sandDrop1 {0%, 100% { cy: 10.5; opacity: 0; transform: translateY(0); }10% { opacity: 1; }90% { cy: 14; opacity: 1; transform: translateY(3.5px); }95% { cy: 14; opacity: 0; }}
+        @keyframes sandDrop2 {0%, 100% { cy: 11; opacity: 0; transform: translateY(0); }20% { opacity: 1; }90% { cy: 14; opacity: 1; transform: translateY(3px); }98% { cy: 14; opacity: 0; }}
+        @keyframes sandDrop3 {0%, 100% { cy: 11.5; opacity: 0; transform: translateY(0); }30% { opacity: 1; }90% { cy: 14; opacity: 1; transform: translateY(2.5px); }99% { cy: 14; opacity: 0; }}
+        .sand-grain-1 { animation: sandDrop1 1.5s infinite linear; }
+        .sand-grain-2 { animation: sandDrop2 1.5s infinite linear 0.3s; }
+        .sand-grain-3 { animation: sandDrop3 1.5s infinite linear 0.6s; }
+        .year-item.year-current .hourglass-svg-container { filter: drop-shadow(0 0 8px rgba(236, 72, 153, 0.7)); }
+        
+        .year-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(3.8rem, 1fr)); gap: 0.4rem; }
+        @media (min-width: 640px) { .year-grid { grid-template-columns: repeat(auto-fill, minmax(4rem, 1fr)); gap: 0.5rem; } }
+        
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: #1e293b; }
+        ::-webkit-scrollbar-thumb { background: #38bdf8; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #0ea5e9; }
+
+        /* Navigacija */
+        .nav-button { padding: 0.5rem 1rem; border-radius: 0.375rem; font-weight: 500; transition: background-color 0.2s, color 0.2s; color: #94a3b8; }
+        .nav-button:hover { background-color: #334155; color: #e2e8f0; }
+        .nav-button.active { background-color: #4f46e5; color: white; }
+        .page-content { width: 100%; display: flex; flex-direction: column; align-items: center; flex-grow: 1; }
+        .main-content-wrapper.vertical-center-single { flex-grow: 1; justify-content: center; }
+    </style>
+</head>
+<body class="flex flex-col items-center min-h-screen m-0 text-slate-100 gradient-background">
+
+    <nav class="w-full bg-slate-800/80 backdrop-blur-md shadow-lg p-3 sticky top-0 z-40">
+        <div class="max-w-6xl mx-auto flex justify-between items-center"> <div class="flex justify-center space-x-3 sm:space-x-6 flex-grow"> <button id="navTimers" data-page="pageTimers" class="nav-button active">Odbrojavanja</button>
+                <button id="navLifeHourglass" data-page="pageLifeHourglass" class="nav-button">Životni Pješčani Sat</button>
+            </div>
+            <button id="unifiedSettingsButton" aria-label="Otvori postavke" class="p-2.5 rounded-full hover:bg-slate-700/50 focus:outline-none focus:ring-2 focus:ring-slate-500 focus:ring-opacity-50 transition-colors">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-slate-300"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0 2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06-.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>
+            </button>
+        </div>
+    </nav>
+
+    <main class="flex-grow w-full flex flex-col items-center justify-start p-4 pt-8 md:pt-12"> 
+        <div id="pageTimers" class="page-content"> 
+            <div id="mainContentWrapperTimers" class="main-content-wrapper flex flex-col items-center w-full max-w-4xl px-0 sm:px-4">
+                <div id="customEventCountdownContainer" class="timer-card rounded-2xl shadow-2xl mb-6 md:mb-8 w-full p-6 md:p-8" style="display: none;">
+                    <div class="flex items-center justify-center mb-4 md:mb-5">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-indigo-300 mr-3 flex-shrink-0 h-7 w-7 md:h-8 md:w-8"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
+                        <h3 id="customEventNameDisplay" class="text-2xl md:text-3xl font-semibold text-slate-100 truncate" title="Naziv događaja">Naziv događaja</h3>
+                    </div>
+                    <div id="customEventTimeDisplay" class="flex justify-center items-end text-center mt-1 mb-2">
+                        <div id="customEventDaysSegment" class="custom-event-time-segment px-1">
+                            <span id="customEventDays" class="block text-4xl sm:text-5xl md:text-6xl font-bold text-white">--</span>
+                            <span class="block text-xs sm:text-sm text-indigo-200 uppercase tracking-wider">dana</span>
+                        </div>
+                        <div id="customEventHMSGroup" class="flex items-end" style="display: flex;">
+                            <div class="custom-event-time-segment px-1 ml-2 md:ml-3">
+                                <span id="customEventHours" class="block text-3xl sm:text-4xl md:text-5xl font-bold text-white">--</span>
+                                <span class="block text-xs sm:text-sm text-indigo-200 uppercase tracking-wider">sati</span>
+                            </div>
+                            <div class="custom-event-time-segment px-1 ml-1 md:ml-2">
+                                <span id="customEventMinutes" class="block text-3xl sm:text-4xl md:text-5xl font-bold text-white">--</span>
+                                <span class="block text-xs sm:text-sm text-indigo-200 uppercase tracking-wider">min</span>
+                            </div>
+                            <div class="custom-event-time-segment px-1 ml-1 md:ml-2">
+                                <span id="customEventSeconds" class="block text-3xl sm:text-4xl md:text-5xl font-bold text-white">--</span>
+                                <span class="block text-xs sm:text-sm text-indigo-200 uppercase tracking-wider">sek</span>
+                            </div>
+                        </div>
+                    </div>
+                     <div id="customEventPassedMessage" class="text-center text-lg md:text-xl text-yellow-400 font-semibold mt-3 py-2 bg-yellow-500/10 rounded-lg" style="display: none;">Događaj je prošao!</div>
+                </div>
+
+                <div id="yearCountdownContainer" class="timer-card rounded-xl shadow-2xl mb-6 md:mb-8 w-full p-5 md:p-6 flex flex-col items-center justify-center cursor-pointer" style="display: none;">
+                    <div id="yearCountdownLabel" class="text-sm sm:text-base font-medium text-slate-400">Dana do kraja godine:</div>
+                    <div id="yearCountdown" class="text-5xl sm:text-6xl md:text-7xl font-bold text-white tracking-tight">--</div>
+                </div>
+                
+                <div id="dailyTimerCard" class="daily-timer-card timer-card rounded-2xl shadow-2xl w-full p-6 md:p-8 lg:p-12 flex flex-col items-center justify-center cursor-pointer">
+                    <div id="dailyCountdownLabel" class="text-xl md:text-2xl lg:text-3xl font-semibold text-slate-300">Preostalo vrijeme do kraja dana:</div>
+                    <div id="countdown" class="flex items-baseline justify-center gap-x-1 sm:gap-x-2 text-6xl sm:text-7xl md:text-8xl lg:text-9xl font-bold text-white tracking-tighter">
+                        <span id="hours" class="timer-digit-group">--</span>
+                        <span class="timer-separator">:</span>
+                        <span id="minutes" class="timer-digit-group">--</span>
+                        <span class="timer-separator">:</span>
+                        <span id="seconds" class="timer-digit-group">--</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="pageLifeHourglass" class="page-content" style="display: none;"> 
+             <div class="w-full max-w-5xl text-center mb-6 md:mb-10 mt-0"> 
+                <h1 class="text-3xl sm:text-4xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-sky-400 via-cyan-400 to-teal-500 mb-3">Životni Pješčani Sat</h1>
+                <p class="text-slate-400 text-base sm:text-lg">Svako zrno pijeska je trenutak, svaka godina priča za sebe.</p>
+            </div>
+            
+            <div id="yearsContainerWrapper" class="w-full max-w-6xl max-h-[55vh] sm:max-h-[60vh] overflow-y-auto rounded-lg p-1 pr-2 bg-slate-800/30 border border-slate-700/50 mb-6 md:mb-8 shadow-inner">
+                <div id="yearsContainer" class="year-grid mx-auto p-2 sm:p-4 min-h-[200px]">
+                    </div>
+            </div>
+            
+            <div id="lifeHourglassMessage" class="w-full max-w-5xl text-lg sm:text-xl font-medium text-slate-300 h-auto min-h-[3rem] flex items-center justify-center px-4 text-center">
+                </div>
+        </div>
+    </main>
+
+    <div id="unifiedSettingsModal" class="fixed inset-0 z-50 modal-hidden" aria-labelledby="unified-modal-title" role="dialog" aria-modal="true">
+        <div id="unifiedModalOverlay" class="fixed inset-0 bg-black bg-opacity-70 backdrop-blur-sm"></div>
+        <div class="fixed inset-0 overflow-y-auto">
+            <div class="flex min-h-full items-center justify-center p-4 text-center">
+                <div id="unifiedModalContentPanel" class="relative bg-slate-800/95 backdrop-blur-md border border-slate-700 rounded-xl shadow-2xl w-full max-w-lg p-6 md:p-8 text-left transform transition-all">
+                    <div class="flex items-center justify-between mb-6">
+                        <h2 id="unified-modal-title" class="text-2xl font-semibold text-white">Postavke</h2>
+                        <button id="closeUnifiedSettingsModal" aria-label="Zatvori postavke" class="p-1.5 rounded-full text-slate-400 hover:text-slate-200 hover:bg-slate-700 transition-colors">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+                        </button>
+                    </div>
+
+                    <div class="mb-8">
+                        <h3 class="text-xl font-semibold text-sky-400 mb-4 border-b border-slate-700 pb-2">Odbrojavanja</h3>
+                        <div class="space-y-4">
+                            <div class="flex items-center justify-between py-2">
+                                <label for="unifiedYearToggle" class="text-slate-300 font-medium cursor-pointer select-none">Prikaži dane do kraja godine</label>
+                                <label class="switch">
+                                    <input type="checkbox" id="unifiedYearToggle">
+                                    <span class="slider round"></span>
+                                </label>
+                            </div>
+                            <div class="pt-3 border-t border-slate-700/50">
+                                <div class="flex items-center justify-between mb-2.5">
+                                     <h4 class="text-md font-semibold text-slate-200">Prilagođeni događaj</h4>
+                                     <label class="switch">
+                                        <input type="checkbox" id="unifiedCustomEventVisibilityToggle">
+                                        <span class="slider round"></span>
+                                    </label>
+                                </div>
+                                <div id="unifiedCustomEventSettingsContent" class="space-y-3 pl-1"> 
+                                    <div>
+                                        <label for="unifiedCustomEventNameInput" class="block text-sm font-medium text-slate-300 mb-1">Naziv događaja:</label>
+                                        <input type="text" id="unifiedCustomEventNameInput" class="input-style" placeholder="Npr. Rođendan, Godišnjica...">
+                                    </div>
+                                    <div>
+                                        <label for="unifiedCustomEventDateInput" class="block text-sm font-medium text-slate-300 mb-1">Datum događaja:</label>
+                                        <input type="date" id="unifiedCustomEventDateInput" class="input-style">
+                                    </div>
+                                    <div>
+                                        <label class="block text-sm font-medium text-slate-300 mb-1.5">Format prikaza vremena:</label>
+                                        <div class="flex items-center space-x-6 mt-1">
+                                            <div class="flex items-center">
+                                                <input id="unifiedDisplayDaysOnly" name="unifiedCustomEventDisplayFormat" type="radio" value="daysOnly" class="input-style h-4 w-4 text-indigo-500 border-slate-500 focus:ring-indigo-400 focus:ring-offset-slate-800">
+                                                <label for="unifiedDisplayDaysOnly" class="ml-2 block text-sm text-slate-300 cursor-pointer">Samo dani</label>
+                                            </div>
+                                            <div class="flex items-center">
+                                                <input id="unifiedDisplayFullTime" name="unifiedCustomEventDisplayFormat" type="radio" value="fullTime" class="input-style h-4 w-4 text-indigo-500 border-slate-500 focus:ring-indigo-400 focus:ring-offset-slate-800">
+                                                <label for="unifiedDisplayFullTime" class="ml-2 block text-sm text-slate-300 cursor-pointer">Dani i vrijeme</label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="flex gap-x-3 pt-2">
+                                        <button id="unifiedSaveCustomEventButton" class="btn-primary flex-grow">Spremi događaj</button>
+                                        <button id="unifiedClearCustomEventButton" class="btn-secondary">Obriši događaj</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div>
+                        <h3 class="text-xl font-semibold text-sky-400 mb-4 border-b border-slate-700 pb-2">Životni Pješčani Sat</h3>
+                        <div class="space-y-4">
+                            <div>
+                                <label for="unifiedAgeInputLifeHourglass" class="block text-sm font-medium text-slate-300 mb-1">Vaše trenutne godine:</label>
+                                <input type="number" id="unifiedAgeInputLifeHourglass" min="0" max="120" placeholder="Npr. 30" class="input-style">
+                                <p id="unifiedAgeErrorLifeHourglass" class="text-red-400 text-xs mt-1 h-4"></p>
+                            </div>
+                            <div>
+                                <label for="unifiedMaxAgeDisplayInputLifeHourglass" class="block text-sm font-medium text-slate-300 mb-1">Prikaži godine do (vaš cilj):</label>
+                                <input type="number" id="unifiedMaxAgeDisplayInputLifeHourglass" min="1" max="150" placeholder="Npr. 80" class="input-style">
+                                <p id="unifiedMaxAgeErrorLifeHourglass" class="text-red-400 text-xs mt-1 h-4"></p>
+                            </div>
+                            <div class="pt-2">
+                                <button id="unifiedSaveLifeHourglassSettingsBtn" class="btn-primary w-full">Spremi kalendar</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <script>
+        // --- GLOBALNA STANJA I KONSTANTE ---
+        const CUSTOM_EVENT_KEY = 'customCountdownEvent';
+        const YEAR_COUNTDOWN_VISIBLE_KEY = 'yearCountdownVisible';
+        const CUSTOM_EVENT_DISPLAY_FORMAT_KEY = 'customEventDisplayFormat';
+        const CUSTOM_EVENT_MASTER_VISIBLE_KEY = 'customEventMasterVisible';
+        const LIFE_CALENDAR_AGE_KEY = 'fomoLifeCalendarAge';
+        const LIFE_CALENDAR_MAX_AGE_KEY = 'fomoLifeCalendarMaxAge';
+        
+        let currentVisiblePage = 'pageTimers'; 
+        let customEventInterval; 
+        let lifeHourglassInitialized = false; 
+
+        // --- ELEMENTI ZA STRANICU ODBROJAVANJA ---
+        const pageTimers = document.getElementById('pageTimers');
+        const mainContentWrapperTimers = document.getElementById('mainContentWrapperTimers');
+        const hoursDisplayEl = document.getElementById('hours');
+        const minutesDisplayEl = document.getElementById('minutes');
+        const secondsDisplayEl = document.getElementById('seconds');
+        const yearCountdownContainer = document.getElementById('yearCountdownContainer');
+        const yearCountdownLabel = document.getElementById('yearCountdownLabel'); 
+        const yearCountdownDisplay = document.getElementById('yearCountdown');
+        const customEventCountdownContainer = document.getElementById('customEventCountdownContainer');
+        const customEventNameDisplay = document.getElementById('customEventNameDisplay');
+        const customEventDaysDisplay = document.getElementById('customEventDays');
+        const customEventHoursDisplay = document.getElementById('customEventHours');
+        const customEventMinutesDisplay = document.getElementById('customEventMinutes');
+        const customEventSecondsDisplay = document.getElementById('customEventSeconds');
+        const customEventPassedMessage = document.getElementById('customEventPassedMessage');
+        const customEventHMSGroup = document.getElementById('customEventHMSGroup');
+        const dailyTimerCard = document.getElementById('dailyTimerCard');
+        const dailyCountdownLabel = document.getElementById('dailyCountdownLabel');
+        
+        // --- ELEMENTI ZA STRANICU ŽIVOTNI PJEŠČANI SAT ---
+        const pageLifeHourglass = document.getElementById('pageLifeHourglass');
+        
+        // --- NAVIGACIJSKI ELEMENTI ---
+        const navTimersBtn = document.getElementById('navTimers');
+        const navLifeHourglassBtn = document.getElementById('navLifeHourglass');
+        const unifiedSettingsButton = document.getElementById('unifiedSettingsButton'); // Novi gumb
+        const pageElements = {
+            pageTimers: pageTimers,
+            pageLifeHourglass: pageLifeHourglass
+        };
+        const navButtons = {
+            pageTimers: navTimersBtn,
+            pageLifeHourglass: navLifeHourglassBtn
+        };
+
+        // --- ELEMENTI ZA JEDINSTVENI MODAL POSTAVKI ---
+        const unifiedSettingsModal = document.getElementById('unifiedSettingsModal');
+        const unifiedModalOverlay = document.getElementById('unifiedModalOverlay');
+        const closeUnifiedSettingsModalButton = document.getElementById('closeUnifiedSettingsModal');
+        // Odbrojavanja postavke unutar jedinstvenog modala
+        const unifiedYearToggle = document.getElementById('unifiedYearToggle');
+        const unifiedCustomEventVisibilityToggle = document.getElementById('unifiedCustomEventVisibilityToggle');
+        const unifiedCustomEventSettingsContent = document.getElementById('unifiedCustomEventSettingsContent');
+        const unifiedCustomEventNameInput = document.getElementById('unifiedCustomEventNameInput');
+        const unifiedCustomEventDateInput = document.getElementById('unifiedCustomEventDateInput');
+        const unifiedDisplayDaysOnlyRadio = document.getElementById('unifiedDisplayDaysOnly');
+        const unifiedDisplayFullTimeRadio = document.getElementById('unifiedDisplayFullTime');
+        const unifiedSaveCustomEventButton = document.getElementById('unifiedSaveCustomEventButton');
+        const unifiedClearCustomEventButton = document.getElementById('unifiedClearCustomEventButton');
+        // Životni Pješčani Sat postavke unutar jedinstvenog modala
+        const unifiedAgeInputLifeHourglass = document.getElementById('unifiedAgeInputLifeHourglass');
+        const unifiedMaxAgeDisplayInputLifeHourglass = document.getElementById('unifiedMaxAgeDisplayInputLifeHourglass');
+        const unifiedAgeErrorLifeHourglass = document.getElementById('unifiedAgeErrorLifeHourglass');
+        const unifiedMaxAgeErrorLifeHourglass = document.getElementById('unifiedMaxAgeErrorLifeHourglass');
+        const unifiedSaveLifeHourglassSettingsBtn = document.getElementById('unifiedSaveLifeHourglassSettingsBtn');
+
+
+        // --- FUNKCIJE ZA NAVIGACIJU I JEDINSTVENI MODAL ---
+        function showPage(pageId) {
+            if (!pageElements[pageId]) return;
+            Object.keys(pageElements).forEach(id => {
+                if (pageElements[id]) {
+                    if (id === pageId) {
+                        pageElements[id].style.display = 'flex'; 
+                        pageElements[id].classList.remove('content-exit', 'content-exit-active');
+                        pageElements[id].classList.add('content-enter');
+                        requestAnimationFrame(() => { if(pageElements[id]) pageElements[id].classList.add('content-enter-active'); });
+                    } else {
+                        if (pageElements[id].style.display !== 'none') {
+                            pageElements[id].classList.remove('content-enter', 'content-enter-active');
+                            pageElements[id].classList.add('content-exit');
+                            requestAnimationFrame(() => { if(pageElements[id]) pageElements[id].classList.add('content-exit-active'); });
+                            setTimeout(() => { if (currentVisiblePage !== id && pageElements[id]) pageElements[id].style.display = 'none'; }, 300); 
+                        }
+                    }
+                }
+                if (navButtons[id]) navButtons[id].classList.toggle('active', id === pageId);
+            });
+            currentVisiblePage = pageId;
+            if (pageId === 'pageLifeHourglass' && !lifeHourglassInitialized) {
+                initializeLifeHourglassPage();
+                lifeHourglassInitialized = true;
+            }
+        }
+
+        if (navTimersBtn) navTimersBtn.addEventListener('click', () => showPage('pageTimers'));
+        if (navLifeHourglassBtn) navLifeHourglassBtn.addEventListener('click', () => showPage('pageLifeHourglass'));
+
+        function openUnifiedSettingsModal() {
+            if (unifiedSettingsModal) {
+                unifiedSettingsModal.classList.remove('modal-hidden');
+                // Učitaj postavke za Odbrojavanja
+                const savedEvent = JSON.parse(localStorage.getItem(CUSTOM_EVENT_KEY));
+                const savedFormat = localStorage.getItem(CUSTOM_EVENT_DISPLAY_FORMAT_KEY);
+                const isCustomEventMasterVisible = localStorage.getItem(CUSTOM_EVENT_MASTER_VISIBLE_KEY) === 'true';
+                if(unifiedCustomEventVisibilityToggle) unifiedCustomEventVisibilityToggle.checked = isCustomEventMasterVisible;
+                toggleUnifiedCustomEventSettingsContent(isCustomEventMasterVisible);
+                if (savedEvent) {
+                    if(unifiedCustomEventNameInput) unifiedCustomEventNameInput.value = savedEvent.name;
+                    if(unifiedCustomEventDateInput) unifiedCustomEventDateInput.value = savedEvent.date;
+                } else {
+                    if(unifiedCustomEventNameInput) unifiedCustomEventNameInput.value = '';
+                    if(unifiedCustomEventDateInput) unifiedCustomEventDateInput.value = '';
+                }
+                if (savedFormat === 'daysOnly' && unifiedDisplayDaysOnlyRadio) unifiedDisplayDaysOnlyRadio.checked = true;
+                else if (unifiedDisplayFullTimeRadio) unifiedDisplayFullTimeRadio.checked = true;
+                if(unifiedYearToggle) unifiedYearToggle.checked = localStorage.getItem(YEAR_COUNTDOWN_VISIBLE_KEY) === 'true';
+
+                // Učitaj postavke za Životni Pješčani Sat
+                const storedAge = localStorage.getItem(LIFE_CALENDAR_AGE_KEY);
+                const storedMaxAge = localStorage.getItem(LIFE_CALENDAR_MAX_AGE_KEY);
+                if(unifiedAgeInputLifeHourglass) unifiedAgeInputLifeHourglass.value = (storedAge !== null && !isNaN(parseInt(storedAge))) ? parseInt(storedAge) : '';
+                if(unifiedMaxAgeDisplayInputLifeHourglass) unifiedMaxAgeDisplayInputLifeHourglass.value = (storedMaxAge !== null && !isNaN(parseInt(storedMaxAge)) && parseInt(storedMaxAge) > 0) ? parseInt(storedMaxAge) : 80;
+            }
+        }
+
+        function closeUnifiedSettingsModal() {
+            if (unifiedSettingsModal) unifiedSettingsModal.classList.add('modal-hidden');
+        }
+
+        function toggleUnifiedCustomEventSettingsContent(isVisible) {
+            if (unifiedCustomEventSettingsContent) {
+                unifiedCustomEventSettingsContent.style.display = isVisible ? 'block' : 'none';
+            }
+        }
+
+        if (unifiedSettingsButton) unifiedSettingsButton.addEventListener('click', openUnifiedSettingsModal);
+        if (closeUnifiedSettingsModalButton) closeUnifiedSettingsModalButton.addEventListener('click', closeUnifiedSettingsModal);
+        if (unifiedModalOverlay) unifiedModalOverlay.addEventListener('click', closeUnifiedSettingsModal);
+        
+        document.addEventListener('keydown', (event) => {
+            if (event.key === 'Escape' && unifiedSettingsModal && !unifiedSettingsModal.classList.contains('modal-hidden')) {
+                closeUnifiedSettingsModal();
+            }
+        });
+
+        // Listeneri za postavke ODBROJAVANJA unutar jedinstvenog modala
+        if (unifiedYearToggle) {
+            unifiedYearToggle.addEventListener('change', function() {
+                localStorage.setItem(YEAR_COUNTDOWN_VISIBLE_KEY, this.checked);
+                renderYearCountdownVisibility();
+            });
+        }
+        if (unifiedCustomEventVisibilityToggle) {
+            unifiedCustomEventVisibilityToggle.addEventListener('change', function() {
+                const isVisible = this.checked;
+                localStorage.setItem(CUSTOM_EVENT_MASTER_VISIBLE_KEY, isVisible);
+                toggleUnifiedCustomEventSettingsContent(isVisible);
+                renderCustomEventCountdown(); 
+                adjustPageTimersLayout();
+            });
+        }
+        if (unifiedSaveCustomEventButton) {
+            unifiedSaveCustomEventButton.addEventListener('click', () => {
+                const name = unifiedCustomEventNameInput.value.trim();
+                const date = unifiedCustomEventDateInput.value;
+                const displayFormat = unifiedDisplayDaysOnlyRadio.checked ? 'daysOnly' : 'fullTime';
+                if (name && date) {
+                    localStorage.setItem(CUSTOM_EVENT_KEY, JSON.stringify({ name, date }));
+                    localStorage.setItem(CUSTOM_EVENT_DISPLAY_FORMAT_KEY, displayFormat);
+                    localStorage.setItem(CUSTOM_EVENT_MASTER_VISIBLE_KEY, 'true'); 
+                    if(unifiedCustomEventVisibilityToggle) unifiedCustomEventVisibilityToggle.checked = true; 
+                    toggleUnifiedCustomEventSettingsContent(true);
+                    renderCustomEventCountdown();
+                } else { alert('Molimo unesite naziv i datum događaja.'); }
+            });
+        }
+        if (unifiedClearCustomEventButton) {
+            unifiedClearCustomEventButton.addEventListener('click', () => {
+                localStorage.removeItem(CUSTOM_EVENT_KEY);
+                if(unifiedCustomEventNameInput) unifiedCustomEventNameInput.value = '';
+                if(unifiedCustomEventDateInput) unifiedCustomEventDateInput.value = '';
+                renderCustomEventCountdown(); 
+            });
+        }
+        
+        // Listener za postavke ŽIVOTNOG PJEŠČANOG SATA unutar jedinstvenog modala
+        if (unifiedSaveLifeHourglassSettingsBtn) {
+            unifiedSaveLifeHourglassSettingsBtn.addEventListener('click', () => {
+                if (!unifiedAgeErrorLifeHourglass || !unifiedMaxAgeErrorLifeHourglass || !unifiedAgeInputLifeHourglass || !unifiedMaxAgeDisplayInputLifeHourglass) return;
+                let hasError = false;
+                unifiedAgeErrorLifeHourglass.textContent = '';
+                unifiedMaxAgeErrorLifeHourglass.textContent = '';
+                const ageVal = parseInt(unifiedAgeInputLifeHourglass.value);
+                const maxAgeVal = parseInt(unifiedMaxAgeDisplayInputLifeHourglass.value);
+                if (isNaN(ageVal) || ageVal < 0 || ageVal > 120) {
+                    unifiedAgeErrorLifeHourglass.textContent = 'Unesite validne godine (0-120).'; hasError = true;
+                }
+                if (isNaN(maxAgeVal) || maxAgeVal < 1 || maxAgeVal > 150) {
+                    unifiedMaxAgeErrorLifeHourglass.textContent = 'Unesite validan cilj (1-150).'; hasError = true;
+                }
+                if (hasError) return;
+                
+                localStorage.setItem(LIFE_CALENDAR_AGE_KEY, ageVal);
+                localStorage.setItem(LIFE_CALENDAR_MAX_AGE_KEY, maxAgeVal);
+
+                if (lifeHourglassInitialized && window.updateLifeHourglassFromUnifiedSettings) {
+                    window.updateLifeHourglassFromUnifiedSettings(ageVal, maxAgeVal);
+                }
+                // Nema potrebe zatvarati modal osim ako korisnik to eksplicitno ne želi
+            });
+        }
+
+
+        // --- FUNKCIJE ZA STRANICU ODBROJAVANJA (render, update, itd.) ---
+        if (yearCountdownContainer) {
+            yearCountdownContainer.addEventListener('click', () => yearCountdownContainer.classList.toggle('label-pinned'));
+        }
+        if (dailyTimerCard) {
+            dailyTimerCard.addEventListener('click', () => dailyTimerCard.classList.toggle('label-pinned'));
+        }
+
+        function adjustPageTimersLayout() {
+            if (!mainContentWrapperTimers || !customEventCountdownContainer || !yearCountdownContainer) return;
+            const customEventIsVisible = customEventCountdownContainer.style.display === 'block';
+            const yearCountdownIsVisible = yearCountdownContainer.style.display === 'flex';
+            if (!customEventIsVisible && !yearCountdownIsVisible) {
+                mainContentWrapperTimers.classList.add('vertical-center-single');
+            } else {
+                mainContentWrapperTimers.classList.remove('vertical-center-single');
+            }
+        }
+
+        function renderYearCountdownVisibility() {
+            const isVisible = localStorage.getItem(YEAR_COUNTDOWN_VISIBLE_KEY) === 'true';
+            if (!yearCountdownContainer) return;
+            if (isVisible) {
+                yearCountdownContainer.style.display = 'flex'; 
+                yearCountdownContainer.classList.remove('content-exit', 'content-exit-active'); 
+                yearCountdownContainer.classList.add('content-enter');
+                requestAnimationFrame(() => { if(yearCountdownContainer) yearCountdownContainer.classList.add('content-enter-active'); });
+                updateYearCountdown();
+            } else {
+                yearCountdownContainer.classList.remove('content-enter', 'content-enter-active');
+                yearCountdownContainer.classList.add('content-exit');
+                requestAnimationFrame(() => { if(yearCountdownContainer) yearCountdownContainer.classList.add('content-exit-active'); });
+                setTimeout(() => {
+                    if (localStorage.getItem(YEAR_COUNTDOWN_VISIBLE_KEY) !== 'true') {
+                       if(yearCountdownContainer) yearCountdownContainer.style.display = 'none';
+                    }
+                    adjustPageTimersLayout(); 
+                }, 300);
+            }
+             adjustPageTimersLayout(); 
+        }
+        
+        function updateCustomEventCountdown() {
+            const savedEvent = JSON.parse(localStorage.getItem(CUSTOM_EVENT_KEY));
+            const displayFormat = localStorage.getItem(CUSTOM_EVENT_DISPLAY_FORMAT_KEY) || 'fullTime';
+            if (!savedEvent || !customEventCountdownContainer || !customEventNameDisplay || !customEventDaysDisplay || !customEventHoursDisplay || !customEventMinutesDisplay || !customEventSecondsDisplay || !customEventPassedMessage || !customEventHMSGroup) return;
+            const eventDate = new Date(savedEvent.date + "T00:00:00");
+            const now = new Date();
+            const timeLeft = eventDate.getTime() - now.getTime();
+            customEventPassedMessage.style.display = 'none';
+            if (timeLeft < 0) {
+                customEventDaysDisplay.textContent = "0";
+                if (displayFormat === 'fullTime') {
+                    customEventHoursDisplay.textContent = "00"; customEventMinutesDisplay.textContent = "00"; customEventSecondsDisplay.textContent = "00";
+                }
+                customEventPassedMessage.style.display = 'block';
+                if (customEventInterval) clearInterval(customEventInterval); return;
+            }
+            const days = Math.floor(timeLeft / (1000 * 60 * 60 * 24));
+            customEventDaysDisplay.textContent = String(days);
+            if (displayFormat === 'fullTime') {
+                const hours = Math.floor((timeLeft % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+                const minutes = Math.floor((timeLeft % (1000 * 60 * 60)) / (1000 * 60));
+                const seconds = Math.floor((timeLeft % (1000 * 60)) / 1000);
+                customEventHoursDisplay.textContent = String(hours).padStart(2, '0');
+                customEventMinutesDisplay.textContent = String(minutes).padStart(2, '0');
+                customEventSecondsDisplay.textContent = String(seconds).padStart(2, '0');
+            }
+        }
+
+        function renderCustomEventCountdown() {
+            const isMasterVisible = localStorage.getItem(CUSTOM_EVENT_MASTER_VISIBLE_KEY) === 'true';
+            const savedEvent = JSON.parse(localStorage.getItem(CUSTOM_EVENT_KEY));
+            const displayFormat = localStorage.getItem(CUSTOM_EVENT_DISPLAY_FORMAT_KEY) || 'fullTime';
+            if (!customEventCountdownContainer || !customEventHMSGroup) return;
+            if (isMasterVisible && savedEvent) { 
+                if(customEventNameDisplay) { customEventNameDisplay.textContent = savedEvent.name; customEventNameDisplay.title = savedEvent.name; }
+                if(customEventHMSGroup) customEventHMSGroup.style.display = (displayFormat === 'daysOnly') ? 'none' : 'flex';
+                customEventCountdownContainer.style.display = 'block';
+                customEventCountdownContainer.classList.remove('content-exit', 'content-exit-active');
+                customEventCountdownContainer.classList.add('content-enter');
+                requestAnimationFrame(() => { if(customEventCountdownContainer) customEventCountdownContainer.classList.add('content-enter-active'); });
+                updateCustomEventCountdown();
+                if (customEventInterval) clearInterval(customEventInterval);
+                customEventInterval = setInterval(updateCustomEventCountdown, 1000);
+            } else { 
+                if(customEventCountdownContainer) {
+                    customEventCountdownContainer.classList.remove('content-enter', 'content-enter-active');
+                    customEventCountdownContainer.classList.add('content-exit');
+                    requestAnimationFrame(() => { if(customEventCountdownContainer) customEventCountdownContainer.classList.add('content-exit-active'); });
+                    setTimeout(() => {
+                         const currentMasterVisible = localStorage.getItem(CUSTOM_EVENT_MASTER_VISIBLE_KEY) === 'true';
+                         const currentSavedEvent = JSON.parse(localStorage.getItem(CUSTOM_EVENT_KEY));
+                         if (!currentMasterVisible || !currentSavedEvent) {
+                            if(customEventCountdownContainer) customEventCountdownContainer.style.display = 'none';
+                         }
+                         adjustPageTimersLayout(); 
+                    }, 300);
+                }
+                if (customEventInterval) clearInterval(customEventInterval);
+            }
+            adjustPageTimersLayout(); 
+        }
+
+        function updateDailyCountdown() {
+            const now = new Date();
+            const endOfDay = new Date(now);
+            endOfDay.setHours(23, 59, 59, 999);
+            const timeLeft = endOfDay.getTime() - now.getTime();
+            if (timeLeft < 0) {
+                if (hoursDisplayEl) hoursDisplayEl.textContent = "00"; if (minutesDisplayEl) minutesDisplayEl.textContent = "00"; if (secondsDisplayEl) secondsDisplayEl.textContent = "00"; return;
+            }
+            const hours = Math.floor(timeLeft / (1000 * 60 * 60));
+            const minutes = Math.floor((timeLeft % (1000 * 60 * 60)) / (1000 * 60));
+            const seconds = Math.floor((timeLeft % (1000 * 60)) / 1000);
+            if (hoursDisplayEl) hoursDisplayEl.textContent = String(hours).padStart(2, '0');
+            if (minutesDisplayEl) minutesDisplayEl.textContent = String(minutes).padStart(2, '0');
+            if (secondsDisplayEl) secondsDisplayEl.textContent = String(seconds).padStart(2, '0');
+        }
+
+        function updateYearCountdown() {
+            if (!yearCountdownDisplay) return;
+            const now = new Date();
+            const currentYear = now.getFullYear();
+            const actualEndOfThisYear = new Date(currentYear, 11, 31, 23, 59, 59, 999);
+            const timeUntilActualEndOfThisYear = actualEndOfThisYear.getTime() - now.getTime();
+            if (timeUntilActualEndOfThisYear < 0) yearCountdownDisplay.textContent = "0";
+            else { const daysRemainingThisYear = Math.ceil(timeUntilActualEndOfThisYear / (1000 * 60 * 60 * 24)); yearCountdownDisplay.textContent = daysRemainingThisYear; }
+        }
+        
+        if (unifiedCustomEventDateInput) { // Koristi ID iz jedinstvenog modala
+            const todayForPicker = new Date();
+            const timezoneOffsetForPicker = todayForPicker.getTimezoneOffset() * 60000;
+            const localISOTimeForPicker = (new Date(todayForPicker - timezoneOffsetForPicker)).toISOString().split('T')[0];
+            unifiedCustomEventDateInput.min = localISOTimeForPicker;
+        }
+
+        // --- FUNKCIJE ZA STRANICU ŽIVOTNI PJEŠČANI SAT ---
+        function initializeLifeHourglassPage() {
+            const yearsContainerLife = document.getElementById('yearsContainer'); 
+            const messageDivLife = document.getElementById('lifeHourglassMessage'); 
+            // Elementi za modal postavki za Životni Pješčani Sat (sada unutar jedinstvenog modala)
+            // Nema potrebe za dohvaćanjem `settingsModalLife`, `modalOverlayLife`, `openSettingsBtnLife`, `closeSettingsBtnLife`
+            // jer se koristi jedinstveni modal.
+            // `saveSettingsBtnLife` je sada `unifiedSaveLifeHourglassSettingsBtn`
+            // `ageInputLife`, `maxAgeDisplayInputLife`, itd. su sada `unifiedAgeInputLifeHourglass`, itd.
+
+            let currentAgeLife = null;  
+            let maxAgeDisplayLife = 80;
+
+            const symmetricalGlassPath = "M6 4h12v2l-4 4v4l4 4v2H6v-2l4-4V10L6 6V4z";
+            const svgHourglass = {
+                past: `<svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="${symmetricalGlassPath}" fill="#475569" fill-opacity="0.1"/><path d="M9.5 8 H14.5 L12 9 Z" fill="#e0f2fe" fill-opacity="0.2"/><path d="M7 19.5h10v-5L12.5 12.5H11.5L7 15v4.5z" fill="#64748b" fill-opacity="0.3"/></svg>`,
+                current: `<svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="${symmetricalGlassPath}" fill="#475569" fill-opacity="0.5"/><path d="M7 5h10v3.5L12.5 11H11.5L7 8.5V5z" fill="#e0f2fe"/><path d="M7.5 19.5h9V16l-1.5-1.5h-6L7.5 16v3.5z" fill="#94a3b8"/><circle class="sand-grain-1" cx="12" cy="10.5" r="0.7" fill="#ec4899"/><circle class="sand-grain-2" cx="11.8" cy="11" r="0.6" fill="#ec4899"/><circle class="sand-grain-3" cx="12.2" cy="11.5" r="0.5" fill="#ec4899"/></svg>`,
+                future: `<svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="${symmetricalGlassPath}" fill="#475569" fill-opacity="0.3"/><path d="M7 5h10v5L12.5 12.5H11.5L7 10V5z" fill="#e0f2fe"/><path d="M7 17.5h10v1.5L12.5 16H11.5L7 19v-1.5z" fill="#94a3b8" fill-opacity="0.3"/></svg>`,
+                neutral: `<svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="${symmetricalGlassPath}" fill="#334155" fill-opacity="0.4"/></svg>`
+            };
+
+            function generateYearItemsLife() {
+                if (!yearsContainerLife) return;
+                yearsContainerLife.innerHTML = '';  
+                if (maxAgeDisplayLife <= 0 || !Number.isInteger(maxAgeDisplayLife)) {
+                    if(messageDivLife) messageDivLife.textContent = "Molimo postavite validan ciljni broj godina u postavkama.";
+                    return;
+                }
+                for (let i = 0; i <= maxAgeDisplayLife; i++) {
+                    const yearItem = document.createElement('div');
+                    yearItem.classList.add('year-item'); yearItem.dataset.year = i;
+                    const svgContainer = document.createElement('div');
+                    svgContainer.classList.add('hourglass-svg-container');
+                    svgContainer.innerHTML = currentAgeLife === null ? svgHourglass.neutral : svgHourglass.future;  
+                    const yearNumberSpan = document.createElement('span');
+                    yearNumberSpan.classList.add('year-number'); yearNumberSpan.textContent = i;
+                    yearItem.appendChild(svgContainer); yearItem.appendChild(yearNumberSpan);
+                    yearsContainerLife.appendChild(yearItem);
+                }
+            }
+
+            function updateDisplayLife() {
+                if (!messageDivLife || !yearsContainerLife) return;
+                if (currentAgeLife === null || !Number.isInteger(currentAgeLife) || maxAgeDisplayLife <= 0) {
+                    messageDivLife.innerHTML = `Podesite Vaše godine i cilj u&nbsp;<button id="openSettingsFromMsgLife" class="text-cyan-400 hover:text-cyan-300 underline font-semibold">postavkama</button>&nbsp;da biste vidjeli kalendar.`;
+                    const openSettingsFromMsgBtnLife = document.getElementById('openSettingsFromMsgLife');
+                    if(openSettingsFromMsgBtnLife) openSettingsFromMsgBtnLife.addEventListener('click', openUnifiedSettingsModal); // Otvara jedinstveni modal
+                    const items = yearsContainerLife.querySelectorAll('.year-item');
+                    items.forEach(item => {
+                        item.classList.remove('year-past', 'year-current', 'year-future'); item.classList.add('year-neutral');
+                        const svgEl = item.querySelector('.hourglass-svg-container');
+                        if(svgEl) svgEl.innerHTML = svgHourglass.neutral;
+                    }); return;
+                }
+                const items = yearsContainerLife.querySelectorAll('.year-item');
+                items.forEach(item => {
+                    const year = parseInt(item.dataset.year);
+                    const svgContainer = item.querySelector('.hourglass-svg-container');
+                    if(!svgContainer) return;
+                    item.classList.remove('year-past', 'year-current', 'year-future', 'year-neutral');
+                    if (year < currentAgeLife) { item.classList.add('year-past'); svgContainer.innerHTML = svgHourglass.past; } 
+                    else if (year === currentAgeLife) { item.classList.add('year-current'); svgContainer.innerHTML = svgHourglass.current; } 
+                    else { item.classList.add('year-future'); svgContainer.innerHTML = svgHourglass.future; }
+                });
+                const yearsLeftUntilTarget = maxAgeDisplayLife - currentAgeLife;
+                if (currentAgeLife > maxAgeDisplayLife) messageDivLife.textContent = `Čestitamo! Pijesak za ${currentAgeLife - maxAgeDisplayLife} ${pluralize(currentAgeLife - maxAgeDisplayLife, 'godinu', 'godine', 'godina')} je već iscurio preko ciljane ${maxAgeDisplayLife}. godine.`;
+                else if (yearsLeftUntilTarget === 0 && currentAgeLife === maxAgeDisplayLife) messageDivLife.textContent = `Ovo je Vaša ${maxAgeDisplayLife}. godina. Posljednja zrnca za ovaj cilj cure...`;
+                else if (yearsLeftUntilTarget > 0) messageDivLife.textContent = `Još ${yearsLeftUntilTarget} ${pluralize(yearsLeftUntilTarget, 'godinu', 'godine', 'godina')} pijeska treba iscuriti do Vaše ${maxAgeDisplayLife}. godine.`;
+                else messageDivLife.textContent = `Pijesak za ${currentAgeLife} ${pluralize(currentAgeLife, 'godinu', 'godine', 'godina')} je iscurio. Postavljeni cilj je ${maxAgeDisplayLife} godina.`;
+            }
+            
+            function pluralize(count, one, few, many) {
+                const mod10 = count % 10; const mod100 = count % 100;
+                if (mod10 === 1 && mod100 !== 11) return one;
+                if ([2, 3, 4].includes(mod10) && ![12, 13, 14].includes(mod100)) return few;
+                return many;
+            }
+            
+            // Funkcija za ažuriranje iz jedinstvenog modala
+            window.updateLifeHourglassFromUnifiedSettings = function(newAge, newMaxAge) {
+                currentAgeLife = newAge;
+                maxAgeDisplayLife = newMaxAge;
+                generateYearItemsLife();  
+                updateDisplayLife(); 
+            }
+            
+            const storedAge = localStorage.getItem(LIFE_CALENDAR_AGE_KEY);
+            const storedMaxAge = localStorage.getItem(LIFE_CALENDAR_MAX_AGE_KEY);
+            if (storedAge !== null && !isNaN(parseInt(storedAge))) currentAgeLife = parseInt(storedAge);
+            if (storedMaxAge !== null && !isNaN(parseInt(storedMaxAge)) && parseInt(storedMaxAge) > 0) maxAgeDisplayLife = parseInt(storedMaxAge);
+            
+            generateYearItemsLife();  
+            updateDisplayLife();      
+        }
+
+        // --- GLAVNA INICIJALIZACIJA APLIKACIJE ---
+        function initializeApp() {
+            updateDailyCountdown();
+            setInterval(updateDailyCountdown, 1000);
+
+            renderYearCountdownVisibility();
+            if (localStorage.getItem(YEAR_COUNTDOWN_VISIBLE_KEY) === 'true') updateYearCountdown();
+            else if(yearCountdownDisplay) yearCountdownDisplay.textContent = "--";
+            
+            if (localStorage.getItem(CUSTOM_EVENT_MASTER_VISIBLE_KEY) === null) localStorage.setItem(CUSTOM_EVENT_MASTER_VISIBLE_KEY, 'true'); 
+            if(unifiedCustomEventVisibilityToggle) unifiedCustomEventVisibilityToggle.checked = localStorage.getItem(CUSTOM_EVENT_MASTER_VISIBLE_KEY) === 'true'; // Koristi unified ID
+            toggleUnifiedCustomEventSettingsContent(localStorage.getItem(CUSTOM_EVENT_MASTER_VISIBLE_KEY) === 'true'); // Koristi unified funkciju
+            renderCustomEventCountdown();
+
+            showPage(currentVisiblePage); 
+            adjustPageTimersLayout(); 
+        }
+
+        initializeApp();
+    </script>
+</body>
+</html>
