@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="hr">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Odbrojavanja i Životni Pješčani Sat</title>
+    <title>Countdowns and Life Hourglass</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style>
@@ -268,10 +268,10 @@
 <body class="flex flex-col items-center min-h-screen m-0 text-slate-100 gradient-background">
 
     <nav class="w-full bg-slate-800/80 backdrop-blur-md shadow-lg p-3 sticky top-0 z-40">
-        <div class="max-w-6xl mx-auto flex justify-between items-center"> <div class="flex justify-center space-x-3 sm:space-x-6 flex-grow"> <button id="navTimers" data-page="pageTimers" class="nav-button active">Odbrojavanja</button>
-                <button id="navLifeHourglass" data-page="pageLifeHourglass" class="nav-button">Životni Pješčani Sat</button>
+        <div class="max-w-6xl mx-auto flex justify-between items-center"> <div class="flex justify-center space-x-3 sm:space-x-6 flex-grow"> <button id="navTimers" data-page="pageTimers" class="nav-button active">Countdowns</button>
+                <button id="navLifeHourglass" data-page="pageLifeHourglass" class="nav-button">Life Hourglass</button>
             </div>
-            <button id="unifiedSettingsButton" aria-label="Otvori postavke" class="p-2.5 rounded-full hover:bg-slate-700/50 focus:outline-none focus:ring-2 focus:ring-slate-500 focus:ring-opacity-50 transition-colors">
+            <button id="unifiedSettingsButton" aria-label="Open settings" class="p-2.5 rounded-full hover:bg-slate-700/50 focus:outline-none focus:ring-2 focus:ring-slate-500 focus:ring-opacity-50 transition-colors">
                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-slate-300"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0 2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06-.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>
             </button>
         </div>
@@ -283,17 +283,17 @@
                 <div id="customEventCountdownContainer" class="timer-card rounded-2xl shadow-2xl mb-6 md:mb-8 w-full p-6 md:p-8" style="display: none;">
                     <div class="flex items-center justify-center mb-4 md:mb-5">
                         <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-indigo-300 mr-3 flex-shrink-0 h-7 w-7 md:h-8 md:w-8"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
-                        <h3 id="customEventNameDisplay" class="text-2xl md:text-3xl font-semibold text-slate-100 truncate" title="Naziv događaja">Naziv događaja</h3>
+                        <h3 id="customEventNameDisplay" class="text-2xl md:text-3xl font-semibold text-slate-100 truncate" title="Event name">Event name</h3>
                     </div>
                     <div id="customEventTimeDisplay" class="flex justify-center items-end text-center mt-1 mb-2">
                         <div id="customEventDaysSegment" class="custom-event-time-segment px-1">
                             <span id="customEventDays" class="block text-4xl sm:text-5xl md:text-6xl font-bold text-white">--</span>
-                            <span class="block text-xs sm:text-sm text-indigo-200 uppercase tracking-wider">dana</span>
+                            <span class="block text-xs sm:text-sm text-indigo-200 uppercase tracking-wider">days</span>
                         </div>
                         <div id="customEventHMSGroup" class="flex items-end" style="display: flex;">
                             <div class="custom-event-time-segment px-1 ml-2 md:ml-3">
                                 <span id="customEventHours" class="block text-3xl sm:text-4xl md:text-5xl font-bold text-white">--</span>
-                                <span class="block text-xs sm:text-sm text-indigo-200 uppercase tracking-wider">sati</span>
+                                <span class="block text-xs sm:text-sm text-indigo-200 uppercase tracking-wider">hours</span>
                             </div>
                             <div class="custom-event-time-segment px-1 ml-1 md:ml-2">
                                 <span id="customEventMinutes" class="block text-3xl sm:text-4xl md:text-5xl font-bold text-white">--</span>
@@ -301,20 +301,20 @@
                             </div>
                             <div class="custom-event-time-segment px-1 ml-1 md:ml-2">
                                 <span id="customEventSeconds" class="block text-3xl sm:text-4xl md:text-5xl font-bold text-white">--</span>
-                                <span class="block text-xs sm:text-sm text-indigo-200 uppercase tracking-wider">sek</span>
+                                <span class="block text-xs sm:text-sm text-indigo-200 uppercase tracking-wider">sec</span>
                             </div>
                         </div>
                     </div>
-                     <div id="customEventPassedMessage" class="text-center text-lg md:text-xl text-yellow-400 font-semibold mt-3 py-2 bg-yellow-500/10 rounded-lg" style="display: none;">Događaj je prošao!</div>
+                     <div id="customEventPassedMessage" class="text-center text-lg md:text-xl text-yellow-400 font-semibold mt-3 py-2 bg-yellow-500/10 rounded-lg" style="display: none;">Event has passed!</div>
                 </div>
 
                 <div id="yearCountdownContainer" class="timer-card rounded-xl shadow-2xl mb-6 md:mb-8 w-full p-5 md:p-6 flex flex-col items-center justify-center cursor-pointer" style="display: none;">
-                    <div id="yearCountdownLabel" class="text-sm sm:text-base font-medium text-slate-400">Dana do kraja godine:</div>
+                    <div id="yearCountdownLabel" class="text-sm sm:text-base font-medium text-slate-400">Days until year-end:</div>
                     <div id="yearCountdown" class="text-5xl sm:text-6xl md:text-7xl font-bold text-white tracking-tight">--</div>
                 </div>
                 
                 <div id="dailyTimerCard" class="daily-timer-card timer-card rounded-2xl shadow-2xl w-full p-6 md:p-8 lg:p-12 flex flex-col items-center justify-center cursor-pointer">
-                    <div id="dailyCountdownLabel" class="text-xl md:text-2xl lg:text-3xl font-semibold text-slate-300">Preostalo vrijeme do kraja dana:</div>
+                    <div id="dailyCountdownLabel" class="text-xl md:text-2xl lg:text-3xl font-semibold text-slate-300">Time remaining until end of day:</div>
                     <div id="countdown" class="flex items-baseline justify-center gap-x-1 sm:gap-x-2 text-6xl sm:text-7xl md:text-8xl lg:text-9xl font-bold text-white tracking-tighter">
                         <span id="hours" class="timer-digit-group">--</span>
                         <span class="timer-separator">:</span>
@@ -328,8 +328,8 @@
 
         <div id="pageLifeHourglass" class="page-content" style="display: none;"> 
              <div class="w-full max-w-5xl text-center mb-6 md:mb-10 mt-0"> 
-                <h1 class="text-3xl sm:text-4xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-sky-400 via-cyan-400 to-teal-500 mb-3">Životni Pješčani Sat</h1>
-                <p class="text-slate-400 text-base sm:text-lg">Svako zrno pijeska je trenutak, svaka godina priča za sebe.</p>
+                <h1 class="text-3xl sm:text-4xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-sky-400 via-cyan-400 to-teal-500 mb-3">Life Hourglass</h1>
+                <p class="text-slate-400 text-base sm:text-lg">Every grain of sand is a moment, every year tells its own story.</p>
             </div>
             
             <div id="yearsContainerWrapper" class="w-full max-w-6xl max-h-[55vh] sm:max-h-[60vh] overflow-y-auto rounded-lg p-1 pr-2 bg-slate-800/30 border border-slate-700/50 mb-6 md:mb-8 shadow-inner">
@@ -348,17 +348,17 @@
             <div class="flex min-h-full items-center justify-center p-4 text-center">
                 <div id="unifiedModalContentPanel" class="relative bg-slate-800/95 backdrop-blur-md border border-slate-700 rounded-xl shadow-2xl w-full max-w-lg p-6 md:p-8 text-left transform transition-all">
                     <div class="flex items-center justify-between mb-6">
-                        <h2 id="unified-modal-title" class="text-2xl font-semibold text-white">Postavke</h2>
-                        <button id="closeUnifiedSettingsModal" aria-label="Zatvori postavke" class="p-1.5 rounded-full text-slate-400 hover:text-slate-200 hover:bg-slate-700 transition-colors">
+                        <h2 id="unified-modal-title" class="text-2xl font-semibold text-white">Settings</h2>
+                        <button id="closeUnifiedSettingsModal" aria-label="Close settings" class="p-1.5 rounded-full text-slate-400 hover:text-slate-200 hover:bg-slate-700 transition-colors">
                             <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
                         </button>
                     </div>
 
                     <div class="mb-8">
-                        <h3 class="text-xl font-semibold text-sky-400 mb-4 border-b border-slate-700 pb-2">Odbrojavanja</h3>
+                        <h3 class="text-xl font-semibold text-sky-400 mb-4 border-b border-slate-700 pb-2">Countdowns</h3>
                         <div class="space-y-4">
                             <div class="flex items-center justify-between py-2">
-                                <label for="unifiedYearToggle" class="text-slate-300 font-medium cursor-pointer select-none">Prikaži dane do kraja godine</label>
+                                <label for="unifiedYearToggle" class="text-slate-300 font-medium cursor-pointer select-none">Show days until year-end</label>
                                 <label class="switch">
                                     <input type="checkbox" id="unifiedYearToggle">
                                     <span class="slider round"></span>
@@ -366,7 +366,7 @@
                             </div>
                             <div class="pt-3 border-t border-slate-700/50">
                                 <div class="flex items-center justify-between mb-2.5">
-                                     <h4 class="text-md font-semibold text-slate-200">Prilagođeni događaj</h4>
+                                     <h4 class="text-md font-semibold text-slate-200">Custom event</h4>
                                      <label class="switch">
                                         <input type="checkbox" id="unifiedCustomEventVisibilityToggle">
                                         <span class="slider round"></span>
@@ -374,29 +374,29 @@
                                 </div>
                                 <div id="unifiedCustomEventSettingsContent" class="space-y-3 pl-1"> 
                                     <div>
-                                        <label for="unifiedCustomEventNameInput" class="block text-sm font-medium text-slate-300 mb-1">Naziv događaja:</label>
-                                        <input type="text" id="unifiedCustomEventNameInput" class="input-style" placeholder="Npr. Rođendan, Godišnjica...">
+                                        <label for="unifiedCustomEventNameInput" class="block text-sm font-medium text-slate-300 mb-1">Event name:</label>
+                                        <input type="text" id="unifiedCustomEventNameInput" class="input-style" placeholder="E.g. Birthday, Anniversary...">
                                     </div>
                                     <div>
-                                        <label for="unifiedCustomEventDateInput" class="block text-sm font-medium text-slate-300 mb-1">Datum događaja:</label>
+                                        <label for="unifiedCustomEventDateInput" class="block text-sm font-medium text-slate-300 mb-1">Event date:</label>
                                         <input type="date" id="unifiedCustomEventDateInput" class="input-style">
                                     </div>
                                     <div>
-                                        <label class="block text-sm font-medium text-slate-300 mb-1.5">Format prikaza vremena:</label>
+                                        <label class="block text-sm font-medium text-slate-300 mb-1.5">Time display format:</label>
                                         <div class="flex items-center space-x-6 mt-1">
                                             <div class="flex items-center">
                                                 <input id="unifiedDisplayDaysOnly" name="unifiedCustomEventDisplayFormat" type="radio" value="daysOnly" class="input-style h-4 w-4 text-indigo-500 border-slate-500 focus:ring-indigo-400 focus:ring-offset-slate-800">
-                                                <label for="unifiedDisplayDaysOnly" class="ml-2 block text-sm text-slate-300 cursor-pointer">Samo dani</label>
+                                                <label for="unifiedDisplayDaysOnly" class="ml-2 block text-sm text-slate-300 cursor-pointer">Days only</label>
                                             </div>
                                             <div class="flex items-center">
                                                 <input id="unifiedDisplayFullTime" name="unifiedCustomEventDisplayFormat" type="radio" value="fullTime" class="input-style h-4 w-4 text-indigo-500 border-slate-500 focus:ring-indigo-400 focus:ring-offset-slate-800">
-                                                <label for="unifiedDisplayFullTime" class="ml-2 block text-sm text-slate-300 cursor-pointer">Dani i vrijeme</label>
+                                                <label for="unifiedDisplayFullTime" class="ml-2 block text-sm text-slate-300 cursor-pointer">Days and time</label>
                                             </div>
                                         </div>
                                     </div>
                                     <div class="flex gap-x-3 pt-2">
-                                        <button id="unifiedSaveCustomEventButton" class="btn-primary flex-grow">Spremi događaj</button>
-                                        <button id="unifiedClearCustomEventButton" class="btn-secondary">Obriši događaj</button>
+                                        <button id="unifiedSaveCustomEventButton" class="btn-primary flex-grow">Save event</button>
+                                        <button id="unifiedClearCustomEventButton" class="btn-secondary">Delete event</button>
                                     </div>
                                 </div>
                             </div>
@@ -404,20 +404,20 @@
                     </div>
 
                     <div>
-                        <h3 class="text-xl font-semibold text-sky-400 mb-4 border-b border-slate-700 pb-2">Životni Pješčani Sat</h3>
+                        <h3 class="text-xl font-semibold text-sky-400 mb-4 border-b border-slate-700 pb-2">Life Hourglass</h3>
                         <div class="space-y-4">
                             <div>
-                                <label for="unifiedAgeInputLifeHourglass" class="block text-sm font-medium text-slate-300 mb-1">Vaše trenutne godine:</label>
-                                <input type="number" id="unifiedAgeInputLifeHourglass" min="0" max="120" placeholder="Npr. 30" class="input-style">
+                                <label for="unifiedAgeInputLifeHourglass" class="block text-sm font-medium text-slate-300 mb-1">Your current age:</label>
+                                <input type="number" id="unifiedAgeInputLifeHourglass" min="0" max="120" placeholder="E.g. 30" class="input-style">
                                 <p id="unifiedAgeErrorLifeHourglass" class="text-red-400 text-xs mt-1 h-4"></p>
                             </div>
                             <div>
-                                <label for="unifiedMaxAgeDisplayInputLifeHourglass" class="block text-sm font-medium text-slate-300 mb-1">Prikaži godine do (vaš cilj):</label>
-                                <input type="number" id="unifiedMaxAgeDisplayInputLifeHourglass" min="1" max="150" placeholder="Npr. 80" class="input-style">
+                                <label for="unifiedMaxAgeDisplayInputLifeHourglass" class="block text-sm font-medium text-slate-300 mb-1">Display years up to (your goal):</label>
+                                <input type="number" id="unifiedMaxAgeDisplayInputLifeHourglass" min="1" max="150" placeholder="E.g. 80" class="input-style">
                                 <p id="unifiedMaxAgeErrorLifeHourglass" class="text-red-400 text-xs mt-1 h-4"></p>
                             </div>
                             <div class="pt-2">
-                                <button id="unifiedSaveLifeHourglassSettingsBtn" class="btn-primary w-full">Spremi kalendar</button>
+                                <button id="unifiedSaveLifeHourglassSettingsBtn" class="btn-primary w-full">Save calendar</button>
                             </div>
                         </div>
                     </div>
@@ -605,7 +605,7 @@
                     if(unifiedCustomEventVisibilityToggle) unifiedCustomEventVisibilityToggle.checked = true; 
                     toggleUnifiedCustomEventSettingsContent(true);
                     renderCustomEventCountdown();
-                } else { alert('Molimo unesite naziv i datum događaja.'); }
+                } else { alert('Please enter the event name and date.'); }
             });
         }
         if (unifiedClearCustomEventButton) {
@@ -627,10 +627,10 @@
                 const ageVal = parseInt(unifiedAgeInputLifeHourglass.value);
                 const maxAgeVal = parseInt(unifiedMaxAgeDisplayInputLifeHourglass.value);
                 if (isNaN(ageVal) || ageVal < 0 || ageVal > 120) {
-                    unifiedAgeErrorLifeHourglass.textContent = 'Unesite validne godine (0-120).'; hasError = true;
+                    unifiedAgeErrorLifeHourglass.textContent = 'Enter a valid age (0-120)'; hasError = true;
                 }
                 if (isNaN(maxAgeVal) || maxAgeVal < 1 || maxAgeVal > 150) {
-                    unifiedMaxAgeErrorLifeHourglass.textContent = 'Unesite validan cilj (1-150).'; hasError = true;
+                    unifiedMaxAgeErrorLifeHourglass.textContent = 'Enter a valid goal (1-150)'; hasError = true;
                 }
                 if (hasError) return;
                 
@@ -807,7 +807,7 @@
                 if (!yearsContainerLife) return;
                 yearsContainerLife.innerHTML = '';  
                 if (maxAgeDisplayLife <= 0 || !Number.isInteger(maxAgeDisplayLife)) {
-                    if(messageDivLife) messageDivLife.textContent = "Molimo postavite validan ciljni broj godina u postavkama.";
+                    if(messageDivLife) messageDivLife.textContent = "Please set a valid target age in settings.";
                     return;
                 }
                 for (let i = 0; i <= maxAgeDisplayLife; i++) {
@@ -826,7 +826,7 @@
             function updateDisplayLife() {
                 if (!messageDivLife || !yearsContainerLife) return;
                 if (currentAgeLife === null || !Number.isInteger(currentAgeLife) || maxAgeDisplayLife <= 0) {
-                    messageDivLife.innerHTML = `Podesite Vaše godine i cilj u&nbsp;<button id="openSettingsFromMsgLife" class="text-cyan-400 hover:text-cyan-300 underline font-semibold">postavkama</button>&nbsp;da biste vidjeli kalendar.`;
+                    messageDivLife.innerHTML = `Set your age and goal in&nbsp;<button id="openSettingsFromMsgLife" class="text-cyan-400 hover:text-cyan-300 underline font-semibold">settings</button>&nbsp;to see the calendar.`;
                     const openSettingsFromMsgBtnLife = document.getElementById('openSettingsFromMsgLife');
                     if(openSettingsFromMsgBtnLife) openSettingsFromMsgBtnLife.addEventListener('click', openUnifiedSettingsModal); // Otvara jedinstveni modal
                     const items = yearsContainerLife.querySelectorAll('.year-item');
@@ -847,10 +847,10 @@
                     else { item.classList.add('year-future'); svgContainer.innerHTML = svgHourglass.future; }
                 });
                 const yearsLeftUntilTarget = maxAgeDisplayLife - currentAgeLife;
-                if (currentAgeLife > maxAgeDisplayLife) messageDivLife.textContent = `Čestitamo! Pijesak za ${currentAgeLife - maxAgeDisplayLife} ${pluralize(currentAgeLife - maxAgeDisplayLife, 'godinu', 'godine', 'godina')} je već iscurio preko ciljane ${maxAgeDisplayLife}. godine.`;
-                else if (yearsLeftUntilTarget === 0 && currentAgeLife === maxAgeDisplayLife) messageDivLife.textContent = `Ovo je Vaša ${maxAgeDisplayLife}. godina. Posljednja zrnca za ovaj cilj cure...`;
-                else if (yearsLeftUntilTarget > 0) messageDivLife.textContent = `Još ${yearsLeftUntilTarget} ${pluralize(yearsLeftUntilTarget, 'godinu', 'godine', 'godina')} pijeska treba iscuriti do Vaše ${maxAgeDisplayLife}. godine.`;
-                else messageDivLife.textContent = `Pijesak za ${currentAgeLife} ${pluralize(currentAgeLife, 'godinu', 'godine', 'godina')} je iscurio. Postavljeni cilj je ${maxAgeDisplayLife} godina.`;
+                if (currentAgeLife > maxAgeDisplayLife) messageDivLife.textContent = `Congratulations! Sand for ${currentAgeLife - maxAgeDisplayLife} ${currentAgeLife - maxAgeDisplayLife === 1 ? 'year' : 'years'} has already flowed beyond your target of ${maxAgeDisplayLife} years.`;
+                else if (yearsLeftUntilTarget === 0 && currentAgeLife === maxAgeDisplayLife) messageDivLife.textContent = `This is your ${maxAgeDisplayLife}th year. The last grains for this goal are flowing...`;
+                else if (yearsLeftUntilTarget > 0) messageDivLife.textContent = `${yearsLeftUntilTarget} more ${yearsLeftUntilTarget === 1 ? 'year' : 'years'} of sand need to flow until your ${maxAgeDisplayLife}th year.`;
+                else messageDivLife.textContent = `Sand for ${currentAgeLife} ${currentAgeLife === 1 ? 'year' : 'years'} has flowed. The set goal is ${maxAgeDisplayLife} years.`;
             }
             
             function pluralize(count, one, few, many) {

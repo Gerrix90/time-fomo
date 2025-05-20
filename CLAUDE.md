@@ -122,12 +122,12 @@ The settings interface uses a unified modal that:
 
 ## Language Support
 
-The application UI text is currently in Croatian. Key terms:
-- "Odbrojavanja" = Countdowns
-- "Životni Pješčani Sat" = Life Hourglass
-- "Postavke" = Settings
-- "Dana do kraja godine" = Days until end of year
-- "Preostalo vrijeme do kraja dana" = Remaining time until end of day
+The application UI is available in English. It was originally created in Croatian, but has been fully translated. Some key terms that were translated include:
+- "Countdowns" (originally "Odbrojavanja")
+- "Life Hourglass" (originally "Životni Pješčani Sat")
+- "Settings" (originally "Postavke")
+- "Days until year-end" (originally "Dana do kraja godine")
+- "Time remaining until end of day" (originally "Preostalo vrijeme do kraja dana")
 
 ## Common Tasks and Debugging
 

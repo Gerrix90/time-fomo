@@ -66,8 +66,8 @@ Then navigate to the URL displayed in the terminal (typically `http://localhost:
 
 ### Navigation
 Use the navigation buttons at the top of the page to switch between:
-- "Odbrojavanja" (Countdowns) - Shows all time countdowns
-- "Životni Pješčani Sat" (Life Hourglass) - Displays the life visualization
+- "Countdowns" - Shows all time countdowns
+- "Life Hourglass" - Displays the life visualization
 
 ### Settings
 Click the gear icon in the top right corner to access settings for both features:
@@ -103,12 +103,12 @@ Click the gear icon in the top right corner to access settings for both features
 - No external libraries or frameworks required (besides Tailwind CSS)
 
 ### Localization
-The current UI is in Croatian. Key terms:
-- "Odbrojavanja" = Countdowns
-- "Životni Pješčani Sat" = Life Hourglass
-- "Postavke" = Settings
-- "Dana do kraja godine" = Days until end of year
-- "Preostalo vrijeme do kraja dana" = Remaining time until end of day
+The UI is available in English. The application was originally created in Croatian - the translations were provided for the following key terms:
+- "Countdowns" (originally "Odbrojavanja")
+- "Life Hourglass" (originally "Životni Pješčani Sat")
+- "Settings" (originally "Postavke")
+- "Days until year-end" (originally "Dana do kraja godine")
+- "Time remaining until end of day" (originally "Preostalo vrijeme do kraja dana")
 
 ## Customization
 
