@@ -437,8 +437,9 @@
         const LIFE_CALENDAR_MAX_AGE_KEY = 'fomoLifeCalendarMaxAge';
         
         let currentVisiblePage = 'pageTimers'; 
-        let customEventInterval; 
-        let lifeHourglassInitialized = false; 
+        let customEventInterval;
+        let yearCountdownInterval;
+        let lifeHourglassInitialized = false;
 
         // --- ELEMENTI ZA STRANICU ODBROJAVANJA ---
         const pageTimers = document.getElementById('pageTimers');
@@ -668,23 +669,27 @@
             const isVisible = localStorage.getItem(YEAR_COUNTDOWN_VISIBLE_KEY) === 'true';
             if (!yearCountdownContainer) return;
             if (isVisible) {
-                yearCountdownContainer.style.display = 'flex'; 
-                yearCountdownContainer.classList.remove('content-exit', 'content-exit-active'); 
+                yearCountdownContainer.style.display = 'flex';
+                yearCountdownContainer.classList.remove('content-exit', 'content-exit-active');
                 yearCountdownContainer.classList.add('content-enter');
                 requestAnimationFrame(() => { if(yearCountdownContainer) yearCountdownContainer.classList.add('content-enter-active'); });
                 updateYearCountdown();
+                if (yearCountdownInterval) clearInterval(yearCountdownInterval);
+                yearCountdownInterval = setInterval(updateYearCountdown, 60 * 60 * 1000);
             } else {
                 yearCountdownContainer.classList.remove('content-enter', 'content-enter-active');
                 yearCountdownContainer.classList.add('content-exit');
                 requestAnimationFrame(() => { if(yearCountdownContainer) yearCountdownContainer.classList.add('content-exit-active'); });
+                if (yearCountdownInterval) { clearInterval(yearCountdownInterval); yearCountdownInterval = null; }
                 setTimeout(() => {
                     if (localStorage.getItem(YEAR_COUNTDOWN_VISIBLE_KEY) !== 'true') {
                        if(yearCountdownContainer) yearCountdownContainer.style.display = 'none';
+                       if(yearCountdownDisplay) yearCountdownDisplay.textContent = "--";
                     }
-                    adjustPageTimersLayout(); 
+                    adjustPageTimersLayout();
                 }, 300);
             }
-             adjustPageTimersLayout(); 
+            adjustPageTimersLayout();
         }
         
         function updateCustomEventCountdown() {
@@ -883,8 +888,6 @@
             setInterval(updateDailyCountdown, 1000);
 
             renderYearCountdownVisibility();
-            if (localStorage.getItem(YEAR_COUNTDOWN_VISIBLE_KEY) === 'true') updateYearCountdown();
-            else if(yearCountdownDisplay) yearCountdownDisplay.textContent = "--";
             
             if (localStorage.getItem(CUSTOM_EVENT_MASTER_VISIBLE_KEY) === null) localStorage.setItem(CUSTOM_EVENT_MASTER_VISIBLE_KEY, 'true'); 
             if(unifiedCustomEventVisibilityToggle) unifiedCustomEventVisibilityToggle.checked = localStorage.getItem(CUSTOM_EVENT_MASTER_VISIBLE_KEY) === 'true'; // Koristi unified ID
