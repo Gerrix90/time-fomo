@@ -102,6 +102,18 @@ Click the gear icon in the top right corner to access settings for both features
 - LocalStorage for persistence between sessions
 - No external libraries or frameworks required (besides Tailwind CSS)
 
+### Using Tailwind CSS in production
+The project relies on the Tailwind Play CDN for quick setup. Browsers display a
+warning that the CDN build is not meant for production use. If you plan to use
+the app offline or want to avoid this warning, compile Tailwind locally:
+
+```bash
+npx tailwindcss -i ./input.css -o ./tailwind.min.css --minify
+```
+
+Replace the `<script src="https://cdn.tailwindcss.com"></script>` tag in
+`index.html` with a `<link rel="stylesheet" href="tailwind.min.css">` reference.
+
 ### Localization
 The UI is available in English. The application was originally created in Croatian - the translations were provided for the following key terms:
 - "Countdowns" (originally "Odbrojavanja")
