@@ -27,6 +27,8 @@ python -m http.server
 python -m SimpleHTTPServer
 ```
 
+Then navigate to `http://localhost:8000` in your browser.
+
 Or using Node.js with a package like `http-server`:
 
 ```bash
@@ -37,9 +39,30 @@ npm install -g http-server
 http-server
 ```
 
+Then navigate to the URL displayed in the terminal (typically `http://localhost:8080`).
+
 ### Open HTML File Directly
 
 The application can also be opened directly in a browser without a server by opening the `index.html` file.
+
+### Build Production Version (Optional)
+
+If you want to deploy the app for production, you should replace the Tailwind CDN with a compiled version:
+
+```bash
+# Install tailwindcss if needed
+npm install -g tailwindcss
+
+# Create an input.css file with @tailwind directives
+echo '@tailwind base;
+@tailwind components;
+@tailwind utilities;' > input.css
+
+# Compile and minify Tailwind
+npx tailwindcss -i ./input.css -o ./tailwind.min.css --minify
+```
+
+Then replace the Tailwind CDN script tag in index.html with a link to the compiled CSS file.
 
 ## Project Structure
 
